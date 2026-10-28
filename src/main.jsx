@@ -3,216 +3,432 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
 
-function Main() {
+function ShieldLogo() {
+  return (
+    <svg
+      className="shield-logo"
+      viewBox="0 0 48 56"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M24 3 43 10v16c0 12-8 20-19 27C13 46 5 38 5 26V10L24 3Z"
+        stroke="currentColor"
+        strokeWidth="2.5"
+      />
+      <path
+        d="M24 11 35 15v11c0 8-4 14-11 20"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M16 36V20l15-6-7 12h7L16 42"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+const navigation = [
+  { icon: '⌂', label: 'Dashboard', href: '#dashboard' },
+  { icon: '◷', label: 'Linha do tempo', href: '#timeline' },
+  { icon: '△', label: 'Eventos', href: '#events' },
+  { icon: '▣', label: 'Ativos', href: '#assets' },
+  { icon: '⬡', label: 'Resposta', href: '#response' },
+];
+
+const metrics = [
+  {
+    icon: '▤',
+    label: 'EVENTOS SIMULADOS',
+    value: '24',
+    detail: 'Registros do cenário',
+    tone: 'green',
+  },
+  {
+    icon: '⚠',
+    label: 'ALERTAS GERADOS',
+    value: '03',
+    detail: 'Precisam de investigação',
+    tone: 'amber',
+  },
+  {
+    icon: '▣',
+    label: 'ATIVOS MONITORADOS',
+    value: '04',
+    detail: 'Infraestrutura fictícia',
+    tone: 'blue',
+  },
+  {
+    icon: '⬡',
+    label: 'ESTADO DO LABORATÓRIO',
+    value: 'Seguro',
+    detail: 'Sem conexões externas',
+    tone: 'green',
+  },
+];
+
+const timeline = [
+  {
+    time: '14:23',
+    title: 'Login suspeito detectado',
+    description: 'Falha de autenticação em um endpoint da rede interna.',
+    status: 'ALERTA',
+    tone: 'amber',
+  },
+  {
+    time: '14:37',
+    title: 'Acesso a servidor interno',
+    description: 'Conexão simulada via RDP a partir de um IP não usual.',
+    status: 'INVESTIGAÇÃO',
+    tone: 'blue',
+  },
+  {
+    time: '14:42',
+    title: 'Atividade incomum identificada',
+    description: 'Sequência fictícia de eventos encaminhada para análise.',
+    status: 'EM ANÁLISE',
+    tone: 'amber',
+  },
+  {
+    time: '14:51',
+    title: 'Alerta encaminhado ao analista',
+    description: 'Incidente aguardando decisão de resposta.',
+    status: 'PENDENTE',
+    tone: 'red',
+  },
+];
+
+const alerts = [
+  {
+    time: '14:32',
+    title: 'Múltiplas falhas de login',
+    detail: 'IP fictício: 192.168.1.10',
+    severity: 'ALTO',
+    tone: 'red',
+  },
+  {
+    time: '14:18',
+    title: 'Atividade suspeita em servidor web',
+    detail: 'Ativo: WEB-01',
+    severity: 'MÉDIO',
+    tone: 'amber',
+  },
+  {
+    time: '13:47',
+    title: 'Novo dispositivo na rede interna',
+    detail: 'Ativo: WS-04',
+    severity: 'BAIXO',
+    tone: 'blue',
+  },
+];
+
+const assets = [
+  {
+    name: 'WEB-01',
+    type: 'Servidor web',
+    ip: '10.0.0.20',
+    status: 'Operacional',
+    tone: 'green',
+  },
+  {
+    name: 'LOG-01',
+    type: 'Servidor de logs',
+    ip: '10.0.0.30',
+    status: 'Monitorado',
+    tone: 'green',
+  },
+  {
+    name: 'WS-04',
+    type: 'Estação de teste',
+    ip: '10.0.0.40',
+    status: 'Monitorado',
+    tone: 'green',
+  },
+  {
+    name: 'DB-01',
+    type: 'Banco de dados',
+    ip: '10.0.0.50',
+    status: 'Operacional',
+    tone: 'green',
+  },
+];
+
+function MetricCard({ item }) {
+  return (
+    <article className={`metric-card tone-${item.tone}`}>
+      <div className="metric-icon" aria-hidden="true">
+        {item.icon}
+      </div>
+
+      <div className="metric-content">
+        <p className="metric-label">{item.label}</p>
+        <strong className="metric-value">{item.value}</strong>
+        <p className="metric-detail">{item.detail}</p>
+      </div>
+    </article>
+  );
+}
+
+function StatusBadge({ children, tone = 'green' }) {
+  return (
+    <span className={`status-badge tone-${tone}`}>
+      {children}
+    </span>
+  );
+}
+
+function App() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-icon">C</div>
-          <div>
+        <a className="brand" href="#dashboard" aria-label="Cyber Lab, início">
+          <ShieldLogo />
+          <span className="brand-copy">
             <strong>CYBER LAB</strong>
             <small>SECURITY SIMULATOR</small>
-          </div>
-        </div>
+          </span>
+        </a>
+
+        <div className="sidebar-divider" />
 
         <p className="menu-label">WORKSPACE</p>
-        <nav>
-          <a className="nav-item active" href="#dashboard">▦ Dashboard</a>
-          <a className="nav-item" href="#timeline">◷ Linha do tempo</a>
-          <a className="nav-item" href="#events">⌕ Eventos</a>
-          <a className="nav-item" href="#assets">▤ Ativos</a>
-          <a className="nav-item" href="#response">⬡ Resposta</a>
+
+        <nav className="sidebar-nav" aria-label="Navegação principal">
+          {navigation.map((item, index) => (
+            <a
+              key={item.href}
+              className={`nav-item ${index === 0 ? 'active' : ''}`}
+              href={item.href}
+            >
+              <span className="nav-icon" aria-hidden="true">
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
+            </a>
+          ))}
         </nav>
 
         <div className="sidebar-bottom">
           <span className="status-dot" />
-          AMBIENTE ISOLADO
-          <small>Somente dados fictícios</small>
+          <strong>AMBIENTE ISOLADO</strong>
+          <p>Somente dados fictícios</p>
+          <span className="sidebar-version">CYBER LAB · V0.2</span>
         </div>
       </aside>
 
-      <main className="main-content" id="dashboard">
+      <main className="main-area" id="dashboard">
         <header className="topbar">
-          <div>
-            <span className="eyebrow">LABORATÓRIO EDUCACIONAL / BLUE TEAM</span>
-            <h1>Centro de Operações</h1>
-            <p>Entenda o ataque. Investigue os sinais. Defenda o ambiente.</p>
-          </div>
-          <div className="simulation-badge">
-            <span className="status-dot" /> SIMULAÇÃO
+          <label className="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input
+              type="search"
+              placeholder="Pesquisar eventos, IPs, usuários..."
+              aria-label="Pesquisar eventos, IPs e usuários"
+            />
+            <kbd>Ctrl + K</kbd>
+          </label>
+
+          <div className="topbar-right">
+            <span className="environment-label">
+              <span className="status-dot" />
+              LABORATÓRIO
+            </span>
+            <div className="user-profile">
+              <span className="avatar">SOC</span>
+              <span className="profile-copy">
+                <strong>Analista</strong>
+                <small>Blue Team</small>
+              </span>
+            </div>
           </div>
         </header>
 
-        <section className="welcome-panel">
-          <div>
-            <span className="eyebrow">CENÁRIO DE TREINAMENTO 001</span>
-            <h2>Incidente TechCorp</h2>
-            <p>
-              Uma sequência de eventos suspeitos foi registrada
-              no ambiente fictício da empresa.
-            </p>
-            <a className="primary-button" href="#timeline">
-              Explorar incidente <span>→</span>
-            </a>
-          </div>
-          <div className="hero-graphic" aria-hidden="true">
-            <div className="orbit orbit-one" />
-            <div className="orbit orbit-two" />
-            <div className="shield">⬡</div>
-            <div className="orbit-point point-one" />
-            <div className="orbit-point point-two" />
-          </div>
-        </section>
-
-        <section className="stats-grid" aria-label="Indicadores">
-          <article className="stat-card">
-            <span className="stat-label">Eventos simulados</span>
-            <strong>24</strong>
-            <span className="stat-note">Registros do cenário</span>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Alertas gerados</span>
-            <strong className="text-orange">03</strong>
-            <span className="stat-note">Precisam de investigação</span>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Ativos monitorados</span>
-            <strong>04</strong>
-            <span className="stat-note">Infraestrutura fictícia</span>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Estado do laboratório</span>
-            <strong className="text-green">Seguro</strong>
-            <span className="stat-note">Sem conexões externas</span>
-          </article>
-        </section>
-
-        <section className="content-grid">
-          <article className="panel timeline-panel" id="timeline">
-            <div className="panel-heading">
-              <div>
-                <h3>Linha do tempo do incidente</h3>
-                <p>Etapas do cenário de treinamento</p>
-              </div>
-              <span className="tag">8 ETAPAS</span>
-            </div>
-
-            <div className="timeline">
-              <div className="timeline-item completed">
-                <span className="timeline-marker">✓</span>
-                <div>
-                  <strong>Reconhecimento</strong>
-                  <p>Informações fictícias identificadas.</p>
-                </div>
-                <span className="timeline-time">ETAPA 01</span>
-              </div>
-              <div className="timeline-item current">
-                <span className="timeline-marker">2</span>
-                <div>
-                  <strong>Acesso inicial</strong>
-                  <p>Evento suspeito aguarda investigação.</p>
-                </div>
-                <span className="timeline-time">ETAPA 02</span>
-              </div>
-              <div className="timeline-item">
-                <span className="timeline-marker">3</span>
-                <div>
-                  <strong>Atividade suspeita</strong>
-                  <p>Eventos anormais no cenário.</p>
-                </div>
-                <span className="timeline-time">ETAPA 03</span>
-              </div>
-              <div className="timeline-item">
-                <span className="timeline-marker">4</span>
-                <div>
-                  <strong>Detecção e resposta</strong>
-                  <p>Investigação, contenção e recuperação.</p>
-                </div>
-                <span className="timeline-time">ETAPA 04+</span>
-              </div>
-            </div>
-          </article>
-
-          <article className="panel" id="events">
-            <div className="panel-heading">
-              <div>
-                <h3>Alertas recentes</h3>
-                <p>Eventos ilustrativos</p>
-              </div>
-              <span className="alert-count">03</span>
-            </div>
-
-            <div className="alert-item">
-              <span className="alert-icon high">!</span>
-              <div>
-                <strong>Múltiplas falhas de login</strong>
-                <p>auth.log · Conta fictícia</p>
-              </div>
-              <span className="severity high-text">ALTO</span>
-            </div>
-            <div className="alert-item">
-              <span className="alert-icon medium">!</span>
-              <div>
-                <strong>Atividade fora do padrão</strong>
-                <p>web.log · Servidor de teste</p>
-              </div>
-              <span className="severity medium-text">MÉDIO</span>
-            </div>
-            <div className="alert-item">
-              <span className="alert-icon medium">!</span>
-              <div>
-                <strong>Acesso a recurso sensível</strong>
-                <p>audit.log · Dados fictícios</p>
-              </div>
-              <span className="severity medium-text">MÉDIO</span>
-            </div>
-
-            <div className="info-note">
-              <span>ⓘ</span>
-              Os alertas são dados demonstrativos, não detecções reais.
-            </div>
-          </article>
-        </section>
-
-        <section className="panel assets-panel" id="assets">
-          <div className="panel-heading">
+        <div className="dashboard-content">
+          <section className="page-heading">
             <div>
-              <h3>Ativos do ambiente</h3>
-              <p>Componentes da infraestrutura fictícia</p>
+              <p className="eyebrow">LABORATÓRIO EDUCACIONAL / BLUE TEAM</p>
+              <h1>
+                Centro de <span>Operações</span>
+              </h1>
+              <p className="page-description">
+                Analise eventos, investigue alertas e desenvolva suas
+                habilidades em um ambiente seguro e 100% fictício.
+              </p>
             </div>
-            <span className="tag">TECHCORP LAB</span>
-          </div>
-          <div className="assets-grid">
-            <div className="asset">
-              <span className="asset-icon">▣</span>
-              <div><strong>Servidor Web</strong><small>10.0.0.20 · WEB</small></div>
-              <span className="asset-status">Monitorado</span>
-            </div>
-            <div className="asset">
-              <span className="asset-icon">▤</span>
-              <div><strong>Servidor de Logs</strong><small>10.0.0.30 · LOG</small></div>
-              <span className="asset-status">Monitorado</span>
-            </div>
-            <div className="asset">
-              <span className="asset-icon">▧</span>
-              <div><strong>Estação de Teste</strong><small>10.0.0.40 · ENDPOINT</small></div>
-              <span className="asset-status">Monitorado</span>
-            </div>
-            <div className="asset">
-              <span className="asset-icon">▥</span>
-              <div><strong>Banco de Teste</strong><small>10.0.0.50 · DATA</small></div>
-              <span className="asset-status">Monitorado</span>
-            </div>
-          </div>
-        </section>
 
-        <footer>
-          <span>CYBER ATTACK LAB · PROJETO EDUCACIONAL</span>
-          <span>Versão 0.1.0 · Dados fictícios</span>
-        </footer>
+            <StatusBadge tone="green">SIMULAÇÃO ATIVA</StatusBadge>
+          </section>
+
+          <section className="incident-banner">
+            <div className="incident-copy">
+              <p className="eyebrow">CENÁRIO DE TREINAMENTO 001</p>
+              <h2>Incidente TechCorp</h2>
+              <p>
+                Uma sequência de eventos suspeitos foi registrada no
+                ambiente fictício da empresa TechCorp. Analise os logs,
+                identifique os indicadores e construa sua investigação.
+              </p>
+              <a className="primary-button" href="#timeline">
+                <span aria-hidden="true">▶</span>
+                Explorar incidente
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+
+            <div className="incident-details">
+              <div className="incident-detail">
+                <span className="detail-icon">⌘</span>
+                <div>
+                  <small>EMPRESA</small>
+                  <strong>TechCorp</strong>
+                </div>
+              </div>
+              <div className="incident-detail">
+                <span className="detail-icon">▣</span>
+                <div>
+                  <small>SETOR</small>
+                  <strong>Tecnologia</strong>
+                </div>
+              </div>
+              <div className="incident-detail">
+                <span className="detail-icon">⬡</span>
+                <div>
+                  <small>AMBIENTE</small>
+                  <strong>Infraestrutura fictícia</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="metrics-grid" aria-label="Resumo do laboratório">
+            {metrics.map((item) => (
+              <MetricCard key={item.label} item={item} />
+            ))}
+          </section>
+
+          <section className="investigation-grid">
+            <article className="panel timeline-panel" id="timeline">
+              <div className="panel-heading">
+                <div>
+                  <h2>Linha do tempo do incidente</h2>
+                  <p>Etapas do cenário de treinamento</p>
+                </div>
+                <span className="panel-counter">08 ETAPAS</span>
+              </div>
+
+              <div className="timeline-list">
+                {timeline.map((event) => (
+                  <div className="timeline-event" key={event.time}>
+                    <span className={`timeline-marker tone-${event.tone}`} />
+                    <time>{event.time}</time>
+                    <div className="timeline-event-copy">
+                      <strong>{event.title}</strong>
+                      <p>{event.description}</p>
+                    </div>
+                    <StatusBadge tone={event.tone}>
+                      {event.status}
+                    </StatusBadge>
+                  </div>
+                ))}
+              </div>
+
+              <a className="text-link" href="#events">
+                Consultar eventos <span aria-hidden="true">→</span>
+              </a>
+            </article>
+
+            <article className="panel alerts-panel" id="events">
+              <div className="panel-heading">
+                <div>
+                  <h2>Alertas recentes</h2>
+                  <p>Eventos ilustrativos para investigação</p>
+                </div>
+                <span className="panel-counter">03</span>
+              </div>
+
+              <div className="alerts-list">
+                {alerts.map((alert) => (
+                  <div className="alert-row" key={alert.time}>
+                    <span className={`alert-marker tone-${alert.tone}`} />
+                    <time>{alert.time}</time>
+                    <div className="alert-copy">
+                      <strong>{alert.title}</strong>
+                      <small>{alert.detail}</small>
+                    </div>
+                    <StatusBadge tone={alert.tone}>
+                      {alert.severity}
+                    </StatusBadge>
+                  </div>
+                ))}
+              </div>
+
+              <a className="text-link" href="#response">
+                Ver resposta ao incidente <span aria-hidden="true">→</span>
+              </a>
+            </article>
+          </section>
+
+          <section className="panel assets-panel" id="assets">
+            <div className="panel-heading">
+              <div>
+                <h2>Ativos monitorados</h2>
+                <p>Inventário fictício do ambiente TechCorp</p>
+              </div>
+              <span className="panel-counter">04 ATIVOS</span>
+            </div>
+
+            <div className="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ATIVO</th>
+                    <th>TIPO</th>
+                    <th>ENDEREÇO IP</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {assets.map((asset) => (
+                    <tr key={asset.name}>
+                      <td className="asset-name">{asset.name}</td>
+                      <td>{asset.type}</td>
+                      <td className="ip-address">{asset.ip}</td>
+                      <td>
+                        <StatusBadge tone={asset.tone}>
+                          {asset.status}
+                        </StatusBadge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section className="panel response-panel" id="response">
+            <div>
+              <p className="eyebrow">PRÓXIMA ETAPA</p>
+              <h2>Investigação e resposta</h2>
+              <p>
+                Analise as evidências simuladas e registre a decisão
+                de resposta para o incidente.
+              </p>
+            </div>
+            <StatusBadge tone="amber">AGUARDANDO ANÁLISE</StatusBadge>
+          </section>
+
+          <footer className="app-footer">
+            <span>CYBER LAB · SECURITY SIMULATOR</span>
+            <span>Versão 0.2.0 · Ambiente educacional isolado</span>
+            <span>Todos os dados são fictícios</span>
+          </footer>
+        </div>
       </main>
     </div>
   );
 }
 
-createRoot(document.getElementById('root')).render(<Main />);
+createRoot(document.getElementById('root')).render(<App />);
