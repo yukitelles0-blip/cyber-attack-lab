@@ -1110,3 +1110,113 @@ tbody tr:hover {
     transition: none !important;
   }
 }
+
+/* Painel interativo de investigação de eventos */
+
+.timeline-event-button {
+  width: 100%;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.timeline-event-button:hover,
+.timeline-event-button.selected {
+  background: #222d32;
+}
+
+.timeline-event-button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+.event-detail-panel {
+  margin: 5px 0 22px;
+  padding: 17px;
+  border: 1px solid #3b594b;
+  border-radius: 5px;
+  background: #151e1b;
+}
+
+.event-detail-panel .panel-heading {
+  margin-bottom: 17px;
+}
+
+.close-detail {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.close-detail:hover {
+  background: var(--panel-hover);
+}
+
+.event-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.event-detail-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.event-detail-grid span {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.8px;
+}
+
+.event-detail-grid strong {
+  color: var(--text);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.evidence-block,
+.investigation-guidance {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #303b39;
+}
+
+.evidence-block h3,
+.investigation-guidance h3 {
+  margin: 0 0 7px;
+  color: #b5dfc8;
+  font-size: 12px;
+}
+
+.evidence-block p,
+.investigation-guidance p {
+  margin: 0;
+  color: #aab7b0;
+  font-size: 11px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .event-detail-panel {
+    padding: 13px;
+  }
+
+  .event-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
