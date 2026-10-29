@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
 
@@ -35,8 +35,10 @@ const timeline = [
     description: 'Falha de autenticação em um endpoint da rede interna.',
     status: 'ALERTA',
     tone: 'amber',
+    severity: 'ALTO',
     source: 'AUTH-LOG-0042',
     asset: 'WS-04',
+    ip: '192.168.1.10',
     evidence: 'Resultado: autenticação recusada. Origem fictícia: 192.168.1.10.',
     investigation: 'Verifique a frequência das falhas, o horário e se existem outros eventos associados à mesma origem.',
   },
@@ -46,8 +48,10 @@ const timeline = [
     description: 'Conexão simulada via RDP a partir de um IP não usual.',
     status: 'INVESTIGAÇÃO',
     tone: 'blue',
+    severity: 'MÉDIO',
     source: 'NETWORK-LOG-0081',
     asset: 'WEB-01',
+    ip: '10.0.0.20',
     evidence: 'Conexão RDP registrada no cenário fictício. Nenhuma conexão real foi executada.',
     investigation: 'Compare a origem do acesso com os ativos conhecidos e procure eventos anteriores que possam explicar a conexão.',
   },
@@ -57,8 +61,10 @@ const timeline = [
     description: 'Sequência fictícia de eventos encaminhada para análise.',
     status: 'EM ANÁLISE',
     tone: 'amber',
+    severity: 'ALTO',
     source: 'SIEM-ALERT-0017',
     asset: 'LOG-01',
+    ip: '10.0.0.30',
     evidence: 'Regra de detecção simulada acionada por uma sequência incomum de eventos.',
     investigation: 'Correlacione os registros de autenticação e rede para avaliar se os eventos fazem parte do mesmo incidente.',
   },
@@ -68,8 +74,10 @@ const timeline = [
     description: 'Incidente aguardando decisão de resposta.',
     status: 'PENDENTE',
     tone: 'red',
+    severity: 'CRÍTICO',
     source: 'CASE-0001',
     asset: 'DB-01',
+    ip: '10.0.0.50',
     evidence: 'Caso fictício aberto para análise. Nenhum sistema foi alterado.',
     investigation: 'Registre as evidências, avalie o impacto potencial e escolha uma medida defensiva simulada.',
   },
@@ -87,6 +95,8 @@ const assets = [
   { name: 'WS-04', type: 'Estação de teste', ip: '10.0.0.40', status: 'Monitorado', tone: 'green' },
   { name: 'DB-01', type: 'Banco de dados', ip: '10.0.0.50', status: 'Operacional', tone: 'green' },
 ];
+
+const severityOptions = ['Todas', 'CRÍTICO', 'ALTO', 'MÉDIO', 'BAIXO'];
 
 function MetricCard({ item }) {
   return (
@@ -108,6 +118,13 @@ function StatusBadge({ children, tone = 'green' }) {
 function EventDetails({ event, onClose }) {
   if (!event) return null;
 
+  const severityTone =
+    event.severity === 'CRÍTICO' || event.severity === 'ALTO'
+      ? 'red'
+      : event.severity === 'MÉDIO'
+        ? 'amber'
+        : 'blue';
+
   return (
     <div className="event-detail-panel" aria-live="polite">
       <div className="panel-heading">
@@ -124,7 +141,9 @@ function EventDetails({ event, onClose }) {
         <div><span>HORÁRIO</span><strong>{event.time}</strong></div>
         <div><span>ATIVO RELACIONADO</span><strong>{event.asset}</strong></div>
         <div><span>REFERÊNCIA DO LOG</span><strong>{event.source}</strong></div>
+        <div><span>IP ASSOCIADO</span><strong>{event.ip}</strong></div>
         <div><span>STATUS</span><strong>{event.status}</strong></div>
+        <div><span>SEVERIDADE</span><strong><StatusBadge tone={severityTone}>{event.severity}</StatusBadge></strong></div>
       </div>
 
       <div className="evidence-block">
@@ -142,6 +161,38 @@ function EventDetails({ event, onClose }) {
 
 function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [severityFilter, setSeverityFilter] = useState('Todas');
+  const [assetFilter, setAssetFilter] = useState('Todos');
+
+  const filteredTimeline = useMemo(() => {
+    const query = searchQuery.trim().toLocaleLowerCase('pt-BR');
+
+    return timeline.filter((event) => {
+      const searchableText = [
+        event.time,
+        event.title,
+        event.description,
+        event.status,
+        event.severity,
+        event.source,
+        event.asset,
+        event.ip,
+      ].join(' ').toLocaleLowerCase('pt-BR');
+
+      const matchesSearch = !query || searchableText.includes(query);
+      const matchesSeverity = severityFilter === 'Todas' || event.severity === severityFilter;
+      const matchesAsset = assetFilter === 'Todos' || event.asset === assetFilter;
+
+      return matchesSearch && matchesSeverity && matchesAsset;
+    });
+  }, [searchQuery, severityFilter, assetFilter]);
+
+  function clearFilters() {
+    setSearchQuery('');
+    setSeverityFilter('Todas');
+    setAssetFilter('Todos');
+  }
 
   return (
     <div className="app-shell">
@@ -170,7 +221,7 @@ function App() {
           <span className="status-dot" />
           <strong>AMBIENTE ISOLADO</strong>
           <p>Somente dados fictícios</p>
-          <span className="sidebar-version">CYBER LAB · V0.3</span>
+          <span className="sidebar-version">CYBER LAB · V0.4</span>
         </div>
       </aside>
 
@@ -178,8 +229,19 @@ function App() {
         <header className="topbar">
           <label className="search-box">
             <span aria-hidden="true">⌕</span>
-            <input type="search" placeholder="Pesquisar eventos, IPs, usuários..." aria-label="Pesquisar eventos, IPs e usuários" />
-            <kbd>Ctrl + K</kbd>
+            <input
+              type="search"
+              placeholder="Pesquisar eventos, IPs, ativos, logs..."
+              aria-label="Pesquisar eventos, IPs, ativos e logs"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+            />
+            {searchQuery && (
+              <button type="button" className="search-clear" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
+                ×
+              </button>
+            )}
+            <kbd>Busca ativa</kbd>
           </label>
 
           <div className="topbar-right">
@@ -230,12 +292,46 @@ function App() {
           <section className="investigation-grid">
             <article className="panel timeline-panel" id="timeline">
               <div className="panel-heading">
-                <div><h2>Linha do tempo do incidente</h2><p>Selecione um evento para investigar</p></div>
-                <span className="panel-counter">04 EVENTOS</span>
+                <div>
+                  <h2>Linha do tempo do incidente</h2>
+                  <p>Pesquise e filtre eventos para investigar</p>
+                </div>
+                <span className="panel-counter">{filteredTimeline.length} DE {timeline.length}</span>
               </div>
 
+              <div className="event-filters">
+                <label className="filter-field">
+                  <span>SEVERIDADE</span>
+                  <select value={severityFilter} onChange={(event) => setSeverityFilter(event.target.value)}>
+                    {severityOptions.map((severity) => (
+                      <option key={severity} value={severity}>{severity === 'Todas' ? 'Todas as severidades' : severity}</option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="filter-field">
+                  <span>ATIVO</span>
+                  <select value={assetFilter} onChange={(event) => setAssetFilter(event.target.value)}>
+                    <option value="Todos">Todos os ativos</option>
+                    {assets.map((asset) => (
+                      <option key={asset.name} value={asset.name}>{asset.name}</option>
+                    ))}
+                  </select>
+                </label>
+
+                <button type="button" className="clear-filters" onClick={clearFilters}>
+                  Limpar filtros
+                </button>
+              </div>
+
+              <p className="filter-summary" aria-live="polite">
+                {filteredTimeline.length === 0
+                  ? 'Nenhum evento corresponde aos filtros selecionados.'
+                  : `${filteredTimeline.length} ${filteredTimeline.length === 1 ? 'evento encontrado' : 'eventos encontrados'}.`}
+              </p>
+
               <div className="timeline-list">
-                {timeline.map((event) => (
+                {filteredTimeline.map((event) => (
                   <button
                     type="button"
                     className={`timeline-event timeline-event-button ${selectedEvent?.time === event.time ? 'selected' : ''}`}
@@ -248,15 +344,27 @@ function App() {
                     <div className="timeline-event-copy">
                       <strong>{event.title}</strong>
                       <p>{event.description}</p>
+                      <small className="event-meta">{event.asset} · {event.source}</small>
                     </div>
-                    <StatusBadge tone={event.tone}>{event.status}</StatusBadge>
+                    <StatusBadge tone={event.severity === 'CRÍTICO' || event.severity === 'ALTO' ? 'red' : event.severity === 'MÉDIO' ? 'amber' : 'blue'}>
+                      {event.severity}
+                    </StatusBadge>
                   </button>
                 ))}
+
+                {filteredTimeline.length === 0 && (
+                  <div className="empty-events">
+                    <span aria-hidden="true">⌕</span>
+                    <strong>Nenhum resultado encontrado</strong>
+                    <p>Tente outro termo ou remova um dos filtros.</p>
+                    <button type="button" className="clear-filters" onClick={clearFilters}>Mostrar todos os eventos</button>
+                  </div>
+                )}
               </div>
 
               <EventDetails event={selectedEvent} onClose={() => setSelectedEvent(null)} />
 
-              <a className="text-link" href="#events">Consultar eventos <span aria-hidden="true">→</span></a>
+              <a className="text-link" href="#events">Consultar alertas recentes <span aria-hidden="true">→</span></a>
             </article>
 
             <article className="panel alerts-panel" id="events">
@@ -314,7 +422,7 @@ function App() {
 
           <footer className="app-footer">
             <span>CYBER LAB · SECURITY SIMULATOR</span>
-            <span>Versão 0.3.0 · Ambiente educacional isolado</span>
+            <span>Versão 0.4.0 · Ambiente educacional isolado</span>
             <span>Todos os dados são fictícios</span>
           </footer>
         </div>
