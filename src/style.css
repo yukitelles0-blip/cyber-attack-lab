@@ -150,3 +150,134 @@
     margin-bottom: 13px;
   }
 }
+
+/* CYBER LAB V0.5 — VISUALIZADOR DE LOGS */
+
+.log-viewer {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  min-width: 0;
+}
+
+.log-viewer-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.log-viewer-heading h3 {
+  margin: 5px 0;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.log-viewer-heading p:not(.eyebrow) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.log-count {
+  color: var(--green);
+  font-family: monospace;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.log-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-width: 220px;
+  margin-bottom: 14px;
+}
+
+.log-filter span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.log-filter select {
+  width: 100%;
+  min-height: 37px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 11px;
+}
+
+.log-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+
+.log-table {
+  width: 100%;
+  min-width: 650px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.log-table th {
+  padding: 12px 10px;
+  background: #151b21;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.7px;
+  white-space: nowrap;
+}
+
+.log-table td {
+  padding: 12px 10px;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  font-size: 10px;
+  vertical-align: middle;
+}
+
+.log-table tbody tr:hover {
+  background: #1b2525;
+}
+
+.log-time,
+.log-message {
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+.log-time {
+  color: var(--green) !important;
+  white-space: nowrap;
+}
+
+.log-message {
+  min-width: 230px;
+  line-height: 1.6;
+}
+
+.log-disclaimer {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+@media (max-width: 760px) {
+  .log-viewer-heading {
+    flex-direction: column;
+  }
+
+  .log-filter {
+    max-width: none;
+  }
+}
